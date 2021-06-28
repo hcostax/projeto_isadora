@@ -1,0 +1,194 @@
+---
+title: "MQO Itaú"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::downcute:
+    code_folding: show
+    self_contained: true
+    thumbnails: false
+    lightbox: true
+pkgdown:
+  as_is: true
+---
+
+
+```{r setup, include=FALSE}
+library(knitr)
+library(rmdformats)
+library(formattable)
+library(tidyverse)
+library(tsibble)
+library(lubridate)
+library(feasts)
+library(fable)
+library(fable.prophet)
+library(kableExtra)
+library(scales)
+
+## Global options
+options(max.print = "75")
+opts_chunk$set(echo = FALSE,
+	             cache = FALSE,
+               prompt = FALSE,
+               tidy = FALSE,
+               comment = NA,
+               message = FALSE,
+               warning = FALSE)
+opts_knit$set(width = 75)
+```
+
+
+
+```{r, eval=TRUE}
+
+
+suppressMessages(library("tidyverse"))
+
+options(scipen = 9999)
+
+# -----------------------------------------------
+# CARREGAR A BASE DE DADOS JÁ EXISTENTE
+
+# Restore the object
+database <- readRDS(file = here::here("data",
+                                      "database.rds")
+)
+
+
+
+
+dados <- database %>% 
+  select(X.Nome_da_Administradora, CNPJ_da_Administradora,
+         Data_base, Código_do_segmento, Taxa_de_administração,
+         Quantidade_de_cotas_comercializadas_no_mês) %>% 
+  mutate(
+    Administradora  = X.Nome_da_Administradora,
+    Codigo_adm      = CNPJ_da_Administradora,
+    Data            = as.Date(paste(substr(Data_base, 1, 4), 
+                                    substr(Data_base, 5, 6), "01", sep = "-")),
+    Codigo_segmento = Código_do_segmento,
+    Tax_adm         = Taxa_de_administração,
+    Qtd_cotas       = as.numeric(Quantidade_de_cotas_comercializadas_no_mês)
+  ) %>% 
+  select(Administradora, Codigo_adm, Data, Codigo_segmento,
+         Tax_adm, Qtd_cotas)
+
+
+
+# ---------------------------------------------------------------
+
+
+# FILTRAR ITAU
+
+# ITAÚ ADM DE CONSÓRCIOS LTDA
+# codigo: 776
+
+# ITAÚ UNIBANCO VEÍCULOS ADM CONS LTDA.
+# codigo: 42421776
+
+
+itau_776 <- dados %>% 
+  filter(
+    Codigo_adm == "776")
+    
+
+
+itau_42421776 <- dados %>% 
+  filter(
+    Codigo_adm == "42421776")
+
+
+
+# --------------------
+# filtar por segmento 
+
+itau.s1_776 <- itau_776 %>% 
+  filter(Codigo_segmento == "1")
+
+
+itau.s1_776[itau.s1_776==0] <- NA
+itau.s1_776 <- itau.s1_776 %>% drop_na()
+
+
+
+```
+
+
+
+```{r, eval=TRUE}
+
+itau.s1_776 %>% 
+  ggplot(aes(x = Data)) +
+  geom_line(aes(y = Qtd_cotas), color = "blue", size = 1) 
+
+itau.s1_776 %>% 
+  ggplot(aes(x = Data)) +
+  geom_line(aes(y = Tax_adm), color = "green", size = 1)
+
+
+
+itau.s1_776 %>% 
+  ggplot(aes(x = Tax_adm, y = Qtd_cotas)) +
+  geom_point(color = "orange", size = 2)
+
+
+itau.s1_776 %>% 
+  ggplot(aes(x = Tax_adm, y = Qtd_cotas)) +
+  geom_point(color = "orange", size = 2) +
+  geom_smooth(method = lm, se = TRUE)
+
+
+
+```
+
+
+
+```{r, eval=TRUE}
+
+modelo_6 <- lm(log(Qtd_cotas) ~ 0 + log(Tax_adm), data = itau.s1_776)
+summary(modelo_6)
+
+
+```
+
+
+```{r, eval=TRUE}
+
+itau.s1_776 %>% 
+  ggplot(aes(x = Qtd_cotas)) +
+  geom_histogram(alpha = 0.45,
+                 fill = "cornflowerblue")
+
+
+
+
+itau.s1_776 %>% 
+  ggplot(aes(x = Tax_adm)) +
+  geom_histogram(alpha = 0.45,
+                 fill = "cornflowerblue")
+
+
+```
+
+
+```{r, eval=TRUE}
+
+# Teste de Shapiro-Wilk para normalidade
+shapiro.test(modelo_6$residuals)
+
+
+
+# Análise de Resíduos 
+par(mfrow = c(2,2))
+
+plot(modelo_6, which = c(1:4), pch = 20)
+
+
+
+# correlacao
+cor(itau.s1_776[,5:6])
+
+
+
+```
+
