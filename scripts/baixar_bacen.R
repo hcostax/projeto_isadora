@@ -1,4 +1,14 @@
 
+# |||||||||||||||||||||||||||||||||||||
+# 
+#   SCRIPT DE PROJETO PILOTO
+#
+#   Autor:        Henrique C. Costa
+#   Site:         https://hcostax.com/
+#
+#--------------------------------------
+
+
 suppressMessages(library(lubridate))
 suppressMessages(library("pdftools"))
 suppressMessages(library("glue"))

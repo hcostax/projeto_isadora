@@ -1,4 +1,13 @@
 
+# |||||||||||||||||||||||||||||||||||||
+# 
+#   SCRIPT DE PROJETO PILOTO
+#
+#   Autor:        Henrique C. Costa
+#   Site:         https://hcostax.com/
+#
+#--------------------------------------
+
 
 # link do bacen para baixar os dados
 # https://www.bcb.gov.br/Fis/Consorcios/Port/BD/201004Consorcios.zip

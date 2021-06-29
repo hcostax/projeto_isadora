@@ -1,5 +1,5 @@
 ---
-title: "MQO Itaú"
+title: "Aplicação de Analise de Regressão"
 date: "`r Sys.Date()`"
 output:
   rmdformats::downcute:
@@ -36,6 +36,8 @@ opts_chunk$set(echo = FALSE,
                warning = FALSE)
 opts_knit$set(width = 75)
 ```
+
+# Analise de elasticidade pelo modelo log-log
 
 
 
@@ -114,74 +116,246 @@ itau.s1_776 <- itau.s1_776 %>% drop_na()
 ```
 
 
+## Quantidade de Cotas comercializadas ao longo do tempo (Jan/2010 até os dias de hoje)
+
 
 ```{r, eval=TRUE}
 
-itau.s1_776 %>% 
-  ggplot(aes(x = Data)) +
-  geom_line(aes(y = Qtd_cotas), color = "blue", size = 1) 
+# carregar o tema customizado
+source(here::here(
+  "scripts", 
+  "theme_custom.R")
+)
+
+
+
+suppressMessages(library(tidyverse))
+suppressMessages(library(scales))
+
+# pacote para inserir a logo
+suppressMessages(library(magick))
+
+#read logo
+logo <- image_read(here::here( 
+  "scripts",
+  "logo-itau.png"))
 
 itau.s1_776 %>% 
-  ggplot(aes(x = Data)) +
-  geom_line(aes(y = Tax_adm), color = "green", size = 1)
+  ggplot(aes(x = Data, y = Qtd_cotas)) +
+  geom_line(size=.8, colour='#f38223')+
+  annotate("rect", fill = "gray50", alpha = 0.3, 
+           xmin = as.Date('2020-02-26'), 
+           xmax = as.Date(Sys.Date()),
+           ymin = -Inf, ymax = Inf)+
+  
+  scale_x_date(breaks = date_breaks("1 year"),
+               labels = date_format("%Y"))+
+  labs(
+    x = NULL,
+    y = NULL,
+    title = "Banco de dados de consórcios - BACEN",
+    subtitle = "Quantidade de cotas comercializadas por mês \nSegmento 1: bens imóveis, para ITAÚ ADM DE CONSÓRCIOS LTDA",
+    caption = " \nFonte: BACEN - Banco Central do Brasil, 2021 \nElaboração: https://hcostax.com "
+  )  +
+  theme_custom()
 
 
+grid::grid.raster(
+  logo, 
+  x = 0.05, 
+  y = 0.0099, 
+  just = c('left', 'bottom'), 
+  width = unit(0.5, 'inches')
+)
+
+
+```
+
+
+
+## Taxa de Administração praticadas ao longo do tempo (Jan/2010 até os dias de hoje)
+
+
+```{r, eval=TRUE}
+
+# carregar o tema customizado
+source(here::here(
+  "scripts", 
+  "theme_custom.R")
+)
+
+
+
+suppressMessages(library(tidyverse))
+suppressMessages(library(scales))
+
+# pacote para inserir a logo
+suppressMessages(library(magick))
+
+#read logo
+logo <- image_read(here::here( 
+  "scripts",
+  "logo-itau.png"))
 
 itau.s1_776 %>% 
-  ggplot(aes(x = Tax_adm, y = Qtd_cotas)) +
-  geom_point(color = "orange", size = 2)
+  ggplot(aes(x = Data, y = Tax_adm)) +
+  geom_line(size=.8, colour='blue')+
+  annotate("rect", fill = "gray50", alpha = 0.3, 
+           xmin = as.Date('2020-02-26'), 
+           xmax = as.Date(Sys.Date()),
+           ymin = -Inf, ymax = Inf)+
+  
+  scale_x_date(breaks = date_breaks("1 year"),
+               labels = date_format("%Y"))+
+  labs(
+    x = NULL,
+    y = NULL,
+    title = "Banco de dados de consórcios - BACEN",
+    subtitle = "Taxa de administração praticadas por mês \nSegmento 1: bens imóveis, para ITAÚ ADM DE CONSÓRCIOS LTDA",
+    caption = " \nFonte: BACEN - Banco Central do Brasil, 2021 \nElaboração: https://hcostax.com "
+  )  +
+  theme_custom()
 
+
+grid::grid.raster(
+  logo, 
+  x = 0.05, 
+  y = 0.0099, 
+  just = c('left', 'bottom'), 
+  width = unit(0.5, 'inches')
+)
+
+
+```
+
+
+
+
+## Dispersão e reta de regressão (relação entre X e Y) ao longo do tempo (Jan/2010 até os dias de hoje)
+
+
+```{r, eval=TRUE}
+
+# carregar o tema customizado
+source(here::here(
+  "scripts", 
+  "theme_custom.R")
+)
+
+
+
+suppressMessages(library(tidyverse))
+suppressMessages(library(scales))
+
+# pacote para inserir a logo
+suppressMessages(library(magick))
+
+#read logo
+logo <- image_read(here::here( 
+  "scripts",
+  "logo-itau.png"))
 
 itau.s1_776 %>% 
   ggplot(aes(x = Tax_adm, y = Qtd_cotas)) +
   geom_point(color = "orange", size = 2) +
-  geom_smooth(method = lm, se = TRUE)
+  geom_smooth(method = lm, se = TRUE) +
+  # annotate("rect", fill = "gray50", alpha = 0.3, 
+  #          xmin = , 
+  #          xmax = as.Date(Sys.Date()),
+  #          ymin = -Inf, ymax = Inf)+
+  # 
+  # scale_x_date(breaks = date_breaks("1 year"),
+  #              labels = date_format("%Y"))+
+  labs(
+    x = "Taxa de Administração",
+    y = "Quantidade de Cotas comercializadas por mês",
+    title = "Banco de dados de consórcios - BACEN",
+    subtitle = "Dispersão e reta de regressão (relação entre X e Y) \nSegmento 1: bens imóveis, para ITAÚ ADM DE CONSÓRCIOS LTDA",
+    caption = " \nFonte: BACEN - Banco Central do Brasil, 2021 \nElaboração: https://hcostax.com "
+  )  +
+  theme_custom()
 
+
+
+grid::grid.raster(
+  logo, 
+  x = 0.05, 
+  y = 0.0099, 
+  just = c('left', 'bottom'), 
+  width = unit(0.5, 'inches')
+)
 
 
 ```
 
+
+## Modelos de teste: 
+
+- Modelo 1 (nível-nível), 
+- Modelo 2 (nível-log), 
+- Modelo 3 (log-log).
 
 
 ```{r, eval=TRUE}
 
-modelo_6 <- lm(log(Qtd_cotas) ~ 0 + log(Tax_adm), data = itau.s1_776)
-summary(modelo_6)
+# ----- 
+# MODELOS
+
+m1 <- lm(Qtd_cotas ~ Tax_adm, data = itau.s1_776)
+m2 <- lm(Qtd_cotas ~ log(Tax_adm), data = itau.s1_776)
+m3 <- lm(log(Qtd_cotas) ~ log(Tax_adm), data = itau.s1_776)
+
+suppressMessages(library(stargazer))
+
+stargazer(m1, m2, m3, type = "text")
+# summary(modelo_6)
 
 
 ```
+
+
+
+
+## Modelos de teste sem constante: 
+
+- Modelo 4 (nível-nível), 
+- Modelo 5 (nível-log), 
+- Modelo 6 (log-log).
 
 
 ```{r, eval=TRUE}
 
-itau.s1_776 %>% 
-  ggplot(aes(x = Qtd_cotas)) +
-  geom_histogram(alpha = 0.45,
-                 fill = "cornflowerblue")
+# ----- 
+# MODELOS
 
+m4 <- lm(Qtd_cotas ~ 0 + Tax_adm, data = itau.s1_776)
+m5 <- lm(Qtd_cotas ~ 0 + log(Tax_adm), data = itau.s1_776)
+m6 <- lm(log(Qtd_cotas) ~ 0 + log(Tax_adm), data = itau.s1_776)
 
+suppressMessages(library(stargazer))
 
-
-itau.s1_776 %>% 
-  ggplot(aes(x = Tax_adm)) +
-  geom_histogram(alpha = 0.45,
-                 fill = "cornflowerblue")
+stargazer(m4, m5, m6, type = "text")
+# summary(modelo_6)
 
 
 ```
+
+
+
+## Modelos 6 (log-log) sem constante: 
 
 
 ```{r, eval=TRUE}
 
 # Teste de Shapiro-Wilk para normalidade
-shapiro.test(modelo_6$residuals)
+shapiro.test(m6$residuals)
 
 
 
 # Análise de Resíduos 
 par(mfrow = c(2,2))
 
-plot(modelo_6, which = c(1:4), pch = 20)
+plot(m6, which = c(1:4), pch = 20)
 
 
 

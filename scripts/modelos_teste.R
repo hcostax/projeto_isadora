@@ -1,5 +1,16 @@
 
 
+# |||||||||||||||||||||||||||||||||||||
+# 
+#   SCRIPT DE PROJETO PILOTO
+#
+#   Autor:        Henrique C. Costa
+#   Site:         https://hcostax.com/
+#
+#--------------------------------------
+
+
+
 library(readr)
 X202104Segmentos_Consolidados <- read_delim("C:/Users/user/Desktop/202104Segmentos_Consolidados.csv", 
                                             ";", escape_double = FALSE, trim_ws = TRUE)

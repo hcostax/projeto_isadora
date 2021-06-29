@@ -1,4 +1,14 @@
 
+# |||||||||||||||||||||||||||||||||||||
+# 
+#   SCRIPT DE PROJETO PILOTO
+#
+#   Autor:        Henrique C. Costa
+#   Site:         https://hcostax.com/
+#
+#--------------------------------------
+
+
 suppressMessages(library(lubridate))
 suppressMessages(library("pdftools"))
 suppressMessages(library("glue"))
@@ -114,6 +124,25 @@ saveRDS(new_database,
 # database <- readRDS(file = here::here("data", 
 #                           "database.rds")
 #         )
+
+
+# -----------------------------------------------
+# salvando os dados em uma tabela de excel
+suppressMessages(library(writexl))
+
+# salvar a taxa de cambio diaria
+write_xlsx(
+  new_database,
+  here::here(
+    "outputs",
+    
+    # renomear com a data da ultima atualizacao
+    paste0("database__", 
+           format(
+             Sys.time(), "%d-%m-%Y"), ".xlsx"))
+)
+
+# ------------------------------------------------
 
 
 # limpar o environment

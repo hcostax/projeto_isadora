@@ -1,4 +1,12 @@
 
+# |||||||||||||||||||||||||||||||||||||
+# 
+#   SCRIPT DE PROJETO PILOTO
+#
+#   Autor:        Henrique C. Costa
+#   Site:         https://hcostax.com/
+#
+#--------------------------------------
 
 
 
@@ -19,12 +27,17 @@ data_atualizada <- "2021-04-01"
 # rodar o script para atualizar
 source(here::here("scripts", "atualizar_bd.R"))
 
-
-# rodar os modelos
-rmarkdown::render(here::here("outputs", "report_mqo_itau.Rmd"), 'html_document')
+# ----------------------------------------------
+# rodar o modelo log-log com os resultados
+# rmarkdown::render(here::here("outputs", "report_mqo_itau.Rmd"), 
+#                   'html_document')
 
 # abrir a analise
 browseURL(here::here("outputs", "report_mqo_itau.html"))
+
+
+#-----------------------------------------------
+
 
 
 

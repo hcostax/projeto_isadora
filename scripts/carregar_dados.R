@@ -1,4 +1,14 @@
 
+# |||||||||||||||||||||||||||||||||||||
+# 
+#   SCRIPT DE PROJETO PILOTO
+#
+#   Autor:        Henrique C. Costa
+#   Site:         https://hcostax.com/
+#
+#--------------------------------------
+
+
 
 # https://stackoverflow.com/questions/41954183/how-can-i-extract-multiple-zip-files-and-read-those-csvs-in-r/41954523
 
@@ -74,6 +84,24 @@ saveRDS(my_data,
 #                           "database.rds")
 #         )
 
+
+# -----------------------------------------------
+# salvando os dados em uma tabela de excel
+suppressMessages(library(writexl))
+
+# salvar a taxa de cambio diaria
+write_xlsx(
+  my_data,
+  here::here(
+    "outputs",
+    
+    # renomear com a data da ultima atualizacao
+    paste0("database__", 
+           format(
+             Sys.time(), "%d-%m-%Y"), ".xlsx"))
+)
+
+# ------------------------------------------------
 
 
 
